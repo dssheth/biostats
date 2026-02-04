@@ -1,0 +1,117 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+pnorm(166, mean = 160, 6)
+```
+
+
+```{r}
+# the probability of x
+qnorm (0.8413447, mean = 160, 6)
+
+```
+
+```{r}
+dnorm (166, 160, 6)
+```
+
+```{r}
+pnorm(166.05, 160, 6)- pnorm(165.95, 160, 6)
+```
+
+```{r}
+# check normality: plotm check,test
+
+x_1 <- rnorm (100, 170, 7)
+hist(x_1)
+```
+
+```{r}
+qqnorm(x_1)
+qqline(x_1)
+```
+```{r}
+# for test: stat test
+# give p value, a test of normality
+# null hyp is, Null = N(u, sigma)
+# alt hyp  = Null not true
+
+
+# if p > 0.05 = accept the null hypothesis
+# if p < 0.05 = reject the null hypothesis
+
+shapiro.test(x_1)
+```
+
+```{r}
+# Mean points plot
+x1 <- rnorm(25,170,7)
+sd(x1)
+se1 <- sd(x1)/sqrt(25)
+se1
+```
+
+```{r}
+x2 <- rnorm(50,170,7)
+sd(x2)
+se2 <- sd(x2)/sqrt(50)
+se2
+```
+
+
+
+```{r}
+x3 <- rnorm(75,170,7)
+sd(x3)
+```
+
+```{r}
+x4 <- rnorm(150,170,7)
+sd(x4)
+```
+
+```{r}
+x5 <- rnorm(500,170,7)
+sd(x5)
+```
+
+```{r}
+x6 <- rnorm(600,170,7)
+sd(x6)
+```
+
+```{r}
+# lambda = 5
+rpois(50, 5)
+```
+
+```{r}
+# replicate - will have vector of means
+mean(rpois(50,5))
+```
+
+```{r}
+rpois_vector_mean <- replicate(100, mean(rpois(50,5)))
+rpois_vector_mean
+```
+
+```{r}
+hist(rpois_vector_mean)
+```
+```{r}
+qqnorm(rpois_vector_mean)
+qqline(rpois_vector_mean)
+```
+
+```{r}
+shapiro.test(rpois_vector_mean)
+```
+
+```{r}
+runif <- runif(rpois_vector_mean)
+hist(runif)
+```
+

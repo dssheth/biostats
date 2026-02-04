@@ -1,0 +1,173 @@
+---
+title: "Class 5 Exercises"
+author: "Dhruvi Sheth"
+date: 14 Jan 2026
+output: html_notebook
+---
+
+## function of summation
+```{r}
+sumof2num <- function(x,y){
+    x+y
+}
+
+sumof2num(2,3)
+```
+
+
+## function of arithmetic operations (simple calculations)
+```{r}
+arithOp <- function(x, y, operation){
+  if (operation == "add" || operation == "+"){
+    return(x + y) 
+  }
+  else if (operation == "subtract" || operation == "-"){
+    return(x - y)
+  }
+  else if (operation == "divide" || operation == "/"){
+    return(x / y)
+  }
+  else if (operation == "multiply" || operation == "*"){
+    return(x * y)
+  }
+  else{
+    stop("Invalid operation: Use add, +, subtract, -, divide, /, multiply, *")
+  }
+}
+```
+```{r}
+arithOp(2,5,"+")
+arithOp(3,6,"*")
+arithOp(9,3,"-")
+arithOp(14,2,"/")
+arithOp(3,8,"subtract")
+arithOp(7,5,"divide")
+        
+```
+
+## Marks To Grade
+
+1. Absolute Grading
+```{r}
+abs_marks_to_grade <- function(marks){
+  if (marks >= 95){
+    grade <- "O"
+    gp <- 10
+  }
+  else if (marks >= 90){
+    grade <- "A"
+    gp <- 10
+  }
+  else if (marks >= 80){
+    grade <- "B+"
+    gp <- 9
+  }
+  else if (marks >= 70){
+    grade <- "B"
+    gp <- 8
+  }
+  else if (marks >= 60){
+    grade <- "C+"
+    gp <- 7
+  }
+  else if (marks >= 50){
+    grade <- "C"
+    gp <- 6
+  }
+  else if (marks >= 40){
+    grade <- "D+"
+    gp <- 5
+  }
+  else if (marks >= 30){
+    grade <- "D"
+    gp <- 4
+  }
+  else if (marks < 30){
+    grade <- "F"
+    gp <- 0
+  }
+  
+  cat("\n")
+  return(c(Grade = grade, Point = gp))
+}
+```
+
+```{r}
+abs_marks_to_grade(50)
+abs_marks_to_grade(95)
+```
+
+2. Relative Grading
+
+```{r}
+rel_marks_to_grade <- function(marks, class_marks) {
+  m <- mean(class_marks)
+  s <- sd(class_marks)
+  
+  if (marks >= m + 1.5 * s){
+    grade <- "O"
+    gp <- 10
+  }
+  else if (marks >= m + 1 * s){
+    grade <- "A"
+    gp <- 10
+  }
+  else if (marks >= m + 0.5 * s){
+    grade <- "B+"
+    gp <- 9
+  }
+    else if (marks >= m){
+    grade <- "B"
+    gp <- 8
+  }
+    else if (marks >= m - 0.5 * s){
+    grade <- "C+"
+    gp <- 7
+  }
+    else if (marks >= m - 1 * s){
+    grade <- "C"
+    gp <- 6
+  }
+    else if (marks >= m - 2 * s){
+    grade <- "D+"
+    gp <- 5
+  }
+    else if (marks >= m - 2.5 * s){
+    grade <- "D"
+    gp <- 4
+  }
+  else {
+    grade <- "F"
+    gp <- 0
+  }
+  
+  cat("\n")
+  return(c(Grade = grade, Point = gp))
+}
+
+```
+
+```{r}
+class_marks <- c(42, 55, 60, 63, 68, 72, 75, 78, 82, 85, 88, 90, 94, 97)
+
+mean(class_marks)
+sd(class_marks)
+```
+
+
+```{r}
+rel_marks_to_grade(97, class_marks)
+rel_marks_to_grade(83, class_marks)
+rel_marks_to_grade(50, class_marks)
+rel_marks_to_grade(30, class_marks)
+```
+
+
+```{r}
+data.frame(
+  Marks = class_marks,
+  Grade = grades[, "Grade"],
+  GradePoint = grades[, "Point"]
+)
+```
+

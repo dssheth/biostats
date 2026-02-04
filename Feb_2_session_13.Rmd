@@ -1,0 +1,137 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+getwd()
+```
+
+```{r}
+setwd("./Desktop/Biostatistics/Project_files/")
+```
+
+```{r}
+infect <- read.table("infect.txt", header = FALSE, sep = "\t", stringsAsFactors = FALSE)
+colnames(infect) <- c("sample_id", "nef_ratio", "cell_line")
+```
+
+```{r}
+rna_files <- list.files(pattern = "\\.htseq$")
+```
+
+```{r}
+serinc5_id <- "ENSG00000164300"
+
+serinc5_list <- lapply(rna_files, function(f) {
+  df <- read.table(f, header = FALSE, sep = "\t", stringsAsFactors = FALSE)
+  df <- df[!grepl("^__", df$V1), ]
+  ser <- df[df$V1 == serinc5_id, ]
+  data.frame(
+    sample_id = tools::file_path_sans_ext(f),
+    SERINC5_RPM = if (nrow(ser) == 0) NA else ser$V2
+  )
+})
+
+serinc5_df <- do.call(rbind, serinc5_list)
+```
+
+```{r}
+infect$sample_id <- tolower(infect$sample_id)
+serinc5_df$sample_id <- tolower(serinc5_df$sample_id)
+plot_df <- merge(infect, serinc5_df, by = "sample_id")
+
+```
+
+```{r}
+# red = low (0-5), green = medium (5-20), blue = high (20-40)
+plot_df$color <- cut(
+  plot_df$nef_ratio,
+  breaks = c(-Inf, 5, 20, Inf),
+  labels = c("red", "green", "blue")
+)
+```
+
+```{r}
+# Plot setup
+plot(
+  plot_df$nef_ratio,
+  plot_df$SERINC5_RPM,
+  type = "n",          # no points yet
+  xlim = c(0, 40),
+  ylim = c(0, 35),
+  xlab = "Nef+ / Nef− Infectivity Ratio",
+  ylab = "SERINC5 Expression (RPM)",
+  xaxt = "n",
+  yaxt = "n",
+  main = "SERINC5 vs Nef Requirement"
+)
+
+# Custom axes
+axis(1, at = seq(0, 40, 10))
+axis(2, at = seq(0, 35, 5))
+
+# Add colored circles
+points(
+  plot_df$nef_ratio,
+  plot_df$SERINC5_RPM,
+  pch = 21,         # circle
+  bg = plot_df$color,
+  cex = 1.5
+)
+
+fit <- lm(SERINC5_RPM ~ nef_ratio, data = plot_df)
+abline(fit, col = "black", lwd = 2)
+```
+
+```{r}
+
+```
+
+```{r}
+serinc5_id <- "ENSG00000164300"
+
+serinc5_list <- lapply(rna_files, function(f) {
+
+  df <- read.table(
+    f,
+    header = FALSE,
+    sep = "\t",
+    stringsAsFactors = FALSE
+  )
+
+  df <- df[!grepl("^__", df$V1), ]
+
+  serinc5_row <- df[df$V1 == serinc5_id, ]
+
+  data.frame(
+    sample_id = tools::file_path_sans_ext(f),
+    SERINC5_RPM = if (nrow(serinc5_row) == 0) NA else serinc5_row$V2
+  )
+})
+
+```
+
+```{r}
+serinc5_df <- do.call(rbind, serinc5_list)
+```
+
+```{r}
+infect$sample_id <- tolower(infect$sample_id)
+serinc5_df$sample_id <- tolower(serinc5_df$sample_id)
+
+plot_df <- merge(infect, serinc5_df, by = "sample_id")
+
+```
+
+```{r}
+plot(
+  plot_df$nef_ratio,
+  plot_df$SERINC5_RPM,
+  pch = 16,
+  xlab = "Nef+ / Nef− Infectivity Ratio",
+  ylab = "SERINC5 Expression (RPM)"
+)
+
+```
+

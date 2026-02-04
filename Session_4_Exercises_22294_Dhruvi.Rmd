@@ -1,0 +1,84 @@
+---
+title: "Session 4 Exercises"
+author: "Dhruvi Sheth"
+date: "12 Jan 2026"
+output:
+  pdf_document: default
+  html_notebook: default
+  word_document: default
+---
+
+```{r}
+set.seed(42)
+```
+
+### Exercise 1: Normal Distribution
+
+```{r , fig.width=5, fig.height=5}
+weights <- rnorm(200, mean = 70, sd = 10)
+
+hist(weights,
+     probability = TRUE,
+     col = "lightblue",
+     main = "Body Weight Distribution",
+     xlab = "Weight (kg)")
+
+x <- seq(min(weights), max(weights), length = 100)
+lines(x, dnorm(x, mean = 70, sd = 10), col = "red", lwd = 2)
+
+```
+
+```{r}
+# Calculate mean and sd
+cat("mean =", mean(weights), "\n")
+cat("sd   =", sd(weights), "\n")
+```
+
+
+### Exercise 2: Binomial Distribution
+
+```{r}
+# Probability of infection = 0.2
+# 50 individuals per experiment
+infection <- rbinom(100, size = 50, prob = 0.2)
+
+hist(infection,
+     probability = TRUE,
+     col = "lightgreen",
+     main = "Number of Infected Individuals",
+     xlab = "Count")
+```
+
+### Exercise 3: Poisson Distribution
+
+```{r, fig.width=5, fig.height=5}
+# Average mutations per gene = 1.5
+mut <- rpois(200, lambda = 1.5)
+
+hist(mut,
+     probability = TRUE,
+     col = "cyan",
+     main = "Mutations per Gene",
+     xlab = "Mutations")
+```
+
+### Exercise 4: Interpretation
+
+1. Which distribution is symmetric?
+Ans: Normal Distribution
+
+2. Which one is skewed?
+Ans: Poisson  is right-skewed.
+
+3. Which biological scenario fits each distribution?
+Ans: 
+
+-Normal distribution:
+Continuous traits like body weight, height, enzyme activity
+
+-Binomial distribution:
+Number of infected individuals, survival vs death, success/failure outcomes
+
+-Poisson distribution:
+Mutations per gene, RNA-seq read counts, rare events per unit time or space
+
