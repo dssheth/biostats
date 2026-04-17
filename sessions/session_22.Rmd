@@ -1,0 +1,205 @@
+---
+title: "Session 22"
+author: "Dhruvi Sheth 22294"
+date: "11 March 2026"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+
+```{r}
+# initialize random number genrator
+
+set.seed(42)
+
+n_tests <- 1000
+
+pvals <- runif(n_tests)
+
+false_positives <- sum(pvals < 0.05)
+
+cat("Number of false positives:", false_positives )
+
+```
+
+```{r}
+# Visualize p value dist
+
+hist(pvals,
+     breaks = 20,
+     main = "p-value dist",
+     xlab = "",
+     col = "lightblue")
+```
+
+```{r}
+# How false positives scale
+
+test_sizes <- c(100,1000,10000, 1000000)
+
+for(n in test_sizes){
+  pvals <- runif(n)
+  fp <- sum(pvals < 0.05)
+  
+  cat("Tests:", n,
+      "False positives:", fp,
+      "Expected:", n*0.05, "\n")
+}
+```
+
+```{r}
+## Family-wise error rate (FWER)
+
+# Probability of at least one false positive
+
+alpha <- 0.05
+n <- 100
+
+fwer <- 1 - (1- alpha)^n
+
+cat("\n Probability of  >=1 false positive with", n, 
+    "tests:", fwer, "\n")
+```
+
+```{r}
+## Family-wise error rate (FWER)
+
+# Probability of at least one false positive
+
+alpha <- 0.05
+n <- 1000
+
+fwer <- 1 - (1- alpha)^n
+
+cat("Probability of  >=1 false positive with", n, 
+    "tests:", fwer)
+```
+
+
+```{r}
+## Bonferroni Correction
+
+n_tests <- 1000
+pvals <- runif(n_tests)
+
+pvals <- c(0.0000000000000000001)
+
+
+# Bonferroni adjusted p-values
+
+p_bonf <- p.adjust(pvals, method = "bonferroni")
+
+significant_bonf <- sum(p_bonf < 0.05)
+
+cat("Significant after bonferroni", significant_bonf)
+
+```
+
+
+```{r}
+# Visualize p value dist
+
+hist(p_bonf,
+     breaks = 200,
+     main = "p-value dist",
+     xlab = " p- value",
+     col = "lightblue")
+```
+```{r}
+c(p_bonf[p_bonf < 1], 0.0000000000000000001)
+```
+
+
+```{r}
+## HOLM Correction
+
+p_holm <- p.adjust(pvals, method = "holm")
+
+significant_holm <- sum(p_holm < 0.05)
+
+cat("SIgnificant after holm:", significant_holm)
+
+c(p_holm[p_holm<1], p_bonf[p_bonf<1], 0.0000000000000000001)
+```
+
+```{r}
+n <- 1000
+p_null <- runif(n)
+
+hist(p_null,
+     breaks = 30,
+     main = "P-value distribution (All null)",
+     xlab = "p-value",
+     col = "skyblue")
+```
+
+```{r}
+n <- 1000
+prop_tp <- 0.1   # 10% true positives
+
+n_tp <- n * prop_tp
+n_null <- n - n_tp
+
+p_null <- runif(n_null)
+p_tp <- rbeta(n_tp, 0.3, 1)
+
+pvals <- c(p_null, p_tp)
+
+hist(pvals, breaks=30, main="P-value distribution (with True Positives)",
+     xlab="p-value", col="orange")
+```
+
+```{r}
+p_bonf <- p.adjust(pvals, method="bonferroni")
+
+hist(p_bonf, breaks=30, main="Bonferroni Adjusted P-values",
+     xlab="adjusted p-value", col="red")
+```
+
+```{r}
+n <- 1000
+true_prop <- 0.1
+
+n_true <- n * true_prop
+n_null <- n - n_true
+
+p_null <- runif(n_null)
+p_true <- rbeta(n_true, 0.3, 1)
+
+pvals <- c(p_null, p_true)
+```
+
+
+```{r}
+p_bonf <- p.adjust(pvals, method = "bonferroni")
+p_holm <- p.adjust(pvals, method = "holm")
+```
+
+```{r}
+set.seed(123)
+par(mfrow = c(1,3))
+
+hist(pvals,
+     breaks = 30,
+     main = "Original p-values",
+     xlab = "p-value",
+     col = "lightblue")
+
+hist(p_bonf,
+     breaks = 30,
+     main = "Bonferroni corrected",
+     xlab = "adjusted p-value",
+     col = "red")
+
+hist(p_holm,
+     breaks = 30,
+     main = "Holm corrected",
+     xlab = "adjusted p-value",
+     col = "green")
+```
+```{r}
+sum(pvals < 0.05)
+sum(p_bonf < 0.05)
+sum(p_holm < 0.05)
+```

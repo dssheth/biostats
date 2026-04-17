@@ -1,0 +1,134 @@
+---
+title: "Session 13"
+author: "Dhruvi Sheth 22294"
+date: "4 Feb, 2026"
+output: html_notebook
+---
+## Create Box Plot and Violin Plot from infectivity data
+
+```{r}
+infect <- read.table("../Project_files/data/infect.txt",
+                     header = FALSE, sep = "\t",
+                     stringsAsFactors = FALSE)
+
+colnames(infect) <- c("sample_id", "nef_ratio", "cell_line")
+```
+
+```{r}
+rna_files <- list.files("../Project_files/data", pattern = "\\.htseq$", full.names = TRUE)
+```
+
+```{r}
+serinc5_id <- "ENSG00000164300"
+
+serinc5_list <- lapply(rna_files, function(f) {
+
+  df <- read.table(
+    f,
+    header = FALSE,
+    sep = "\t",
+    stringsAsFactors = FALSE,
+    fill = TRUE
+  )
+
+  df <- df[, 1:2]
+  colnames(df) <- c("gene_id", "count")
+
+  df <- df[!grepl("^__", df$gene_id), ]
+
+  ser <- df[df$gene_id == serinc5_id, ]
+
+  data.frame(
+    sample_id = sub("\\.htseq$", "", basename(f)),  # clean SRR ID
+    SERINC5_RPM = if (nrow(ser) == 0) NA else ser$count,
+    stringsAsFactors = FALSE
+  )
+})
+
+serinc5_df <- do.call(rbind, serinc5_list)
+```
+
+```{r}
+plot_df <- merge(infect, serinc5_df, by = "sample_id")
+```
+
+```{r}
+plot_df <- plot_df[!is.na(plot_df$SERINC5_RPM), ]
+
+```
+
+```{r}
+plot_df$SERINC5_group <- cut(
+  plot_df$SERINC5_RPM,
+  breaks = c(-Inf, 5, 20, Inf),
+  labels = c("Low (0–5)", "Medium (5–20)", "High (>20)")
+)
+```
+
+
+```{r}
+plot_df$infect_group
+```
+
+
+```{r}
+library(ggplot2)
+
+p_violin <- ggplot(plot_df, aes(x = infect_group, y = SERINC5_RPM)) +
+  geom_violin(
+    aes(fill = infect_group),
+    trim = FALSE,
+    alpha = 0.8,
+    color = "black"
+  ) +
+  scale_fill_manual(
+    values = c(
+      "low" = "red",
+      "medium" = "green3",
+      "high" = "blue"
+    )
+  ) +
+  labs(
+    x = "Nef infectivity group",
+    y = "SERINC5 expression (RPM)"
+  ) +
+  coord_cartesian(ylim = c(0, 35)) +
+  theme_classic() +
+  theme(legend.position = "none")
+
+print(p_violin)
+```
+
+
+```{r}
+library(ggplot2)
+
+p_violin <- ggplot(plot_df, aes(x = infect_group, y = SERINC5_RPM)) +
+  geom_violin(
+    aes(fill = infect_group),
+    trim = FALSE,
+    alpha = 0.8
+  ) +
+  geom_boxplot(
+    width = 0.15,
+    outlier.shape = NA,
+    color = "black"
+  ) +
+  scale_fill_manual(
+    values = c(
+      "low" = "red",
+      "medium" = "green3",
+      "high" = "blue"
+    )
+  ) +
+  labs(
+    x = "Nef infectivity group",
+    y = "SERINC5 expression (RPM)"
+  ) +
+  coord_cartesian(ylim = c(0, 500)) +
+  theme_classic() +
+  theme(legend.position = "none")
+
+print(p_violin)
+
+```

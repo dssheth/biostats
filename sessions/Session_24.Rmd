@@ -1,0 +1,122 @@
+--- 
+title: "Session 24"
+name: Dhruvi Sheth 22294
+date: "16 March, 2026"
+output:
+  pdf_document: default
+  html_notebook: default
+--- 
+
+```{r}
+## Two Way ANOVA Example
+
+# Load dataset
+data("PlantGrowth")
+head(PlantGrowth)
+
+# Add a second factor for demonstration (e.g., light condition: Low, High)
+set.seed(123)
+PlantGrowth$Light <- rep(c("Low", "High"), each=5, length.out=nrow(PlantGrowth))
+PlantGrowth$Light <- factor(PlantGrowth$Light)
+
+```
+```{r}
+str(PlantGrowth)
+``` 
+
+```{r}
+# Two-way ANOVA with interaction
+anova_model <- aov(weight ~ group * Light, data = PlantGrowth)
+summary(anova_model)
+```
+
+```{r}
+# Check group counts
+table(PlantGrowth$group, PlantGrowth$Light)
+```
+
+```{r}
+
+# Post-hoc test if needed
+TukeyHSD(anova_model)# Plot interaction
+interaction.plot(PlantGrowth$group, PlantGrowth$Light, PlantGrowth$weight,
+                 col = c("red","blue"), lty=1:2, ylab="Weight", xlab="Group")
+```
+```{r}
+# Plot interaction
+interaction.plot(PlantGrowth$group, PlantGrowth$Light, PlantGrowth$weight,
+                 col = c("red","blue"), lty=1:2, ylab="Weight", xlab="Group")
+```
+
+```{r}
+# Boxplots to visualize distribution across factors
+library(ggplot2)
+ggplot(PlantGrowth, aes(x=group, y=weight, fill=Light)) +
+  geom_boxplot() +
+  labs(title="Weight by Group and Light Condition")
+```
+```{r}
+# Check normality of residuals (Shapiro-Wilk test)
+anova_model <- aov(weight ~ group * Light, data=PlantGrowth)
+shapiro.test(residuals(anova_model))
+```
+
+```{r}
+# Check homogeneity of variance (Levene's Test)
+library(car)
+leveneTest(weight ~ group*Light, data=PlantGrowth)
+```
+
+
+```{r}
+## MANOVA Example
+
+# Load iris
+data("iris")
+head(iris)
+
+# Add a second factor (e.g., Soil Type: Sandy, Clay)
+set.seed(42)
+iris$Soil <- rep(c("Sandy", "Clay"), length.out=nrow(iris))
+iris$Soil <- factor(iris$Soil)
+```
+
+```{r}
+# Quick look at data
+str(iris)
+summary(iris)
+```
+```{r}
+# Check factor counts
+table(iris$Species, iris$Soil)
+```
+
+```{r}
+# MANOVA: multiple responses
+manova_model <- manova(cbind(Sepal.Length, Sepal.Width, Petal.Length, Petal.Width) ~ Species * Soil, data = iris)
+summary(manova_model, test="Pillai")  # Pillai's trace
+summary.aov(manova_model)  # ANOVA for each dependent variable
+```
+
+```{r}
+# Boxplots for each dependent variable by Species
+library(reshape2)
+iris_long <- melt(iris, id.vars=c("Species","Soil"))
+ggplot(iris_long, aes(x=Species, y=value, fill=Soil)) +
+  geom_boxplot() +
+  facet_wrap(~variable, scales="free_y") +
+  labs(title="Dependent Variables by Species and Soil Type")
+
+```
+```{r}
+# Check correlations among dependent variables
+cor(iris[1:4])
+```
+
+```{r}
+# Check MANOVA assumptions
+# 1. Multivariate normality (using mvnormtest)
+library(mvnormtest)
+mshapiro.test(t(as.matrix(iris[1:4])))  # Shapiro test for multivariate normality
+```
+

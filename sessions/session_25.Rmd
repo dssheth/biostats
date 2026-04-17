@@ -1,0 +1,56 @@
+---
+title: "Session 23 - Effect Size and Outliers"
+name: "Dhruvi Sheth 22294"
+date: "18 March 2026"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+```{r setup}
+# Load necessary packages
+library(dplyr)
+library(rstatix)
+set.seed(123)
+
+```
+
+```{r}
+# ---------------------------
+# 1. Original data (from previous session)
+# ---------------------------
+
+# Example vectors (replace these with your actual a, b, c if already defined)
+a <- rnorm(10, mean=10, sd=10)
+b <- rnorm(10, mean=20, sd=10)
+c <- rnorm(10, mean=30, sd=10)
+
+abcBox <- data.frame(
+  values = c(a, b, c),
+  group = factor(rep(c("a", "b", "c"), each=length(a)))
+)
+
+# Boxplot to visualize
+boxplot(values ~ group, data=abcBox,
+        main="Original a,b,c values",
+        col=c("lightblue", "lightpink", "lightgreen"))
+```
+```{r}
+# ---------------------------
+# 2. Parametric test: ANOVA
+# ---------------------------
+res_anova <- aov(values ~ group, data=abcBox)
+summary(res_anova)
+
+# Effect size
+eta_squared(res_anova)
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+

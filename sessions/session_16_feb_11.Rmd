@@ -1,0 +1,66 @@
+---
+title: "Session 16"
+author: "Dhruvi Sheth 22294"
+date: "Feb 11, 2026"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+## PDF of t-dist, write fn to calculate t-stat and p-value
+
+```{r}
+set.seed(42)
+
+# sample size, less than 30
+n <- 8
+# mean of Null hypothesis
+mu_null <- 0
+#true sd used for simulation
+sigma_true <- 1
+```
+
+```{r}
+#define student's t-test density formula
+t_Density <- function(t,df){
+  coef <- gamma ((df + 1)/2)
+}
+```
+
+```{r}
+Plot
+# different color for different df
+```
+
+```{r}
+# Stimulate data and compute t statistic
+x <- rnorm(n, )
+```
+
+```{r}
+Visualize observed t on the null t dist
+plot ()
+```
+
+ 
+```{r}
+# Calculate p-value 
+```
+ 
+```{r}
+# verify the built-in pt() fn
+```
+ 
+```{r}
+# Quick interpretation helper <- if p_value < alpha) "Reject H0" else "Fail to reject H0"
+
+cat("\n ---- Step 8: Interpretation ---\n")
+
+alpha <- 0.05
+decision
+
+alpha line for p-value
+)
+```
+ 
+ 

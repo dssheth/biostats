@@ -1,0 +1,21 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Random 100 values
+
+```{r}
+set.seed(123)
+runif(100) -> random_values
+shapiro.test(random_values)
+```
+
+```{r}
+hist(random_values)
+```
+
+```{r}
+  
+```
+

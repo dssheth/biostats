@@ -1,0 +1,64 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+mu <- 0
+sigma <- 0
+```
+
+
+```{r}
+x <- seq(from = mu - 4*sigma, to = mu +4*sigma, length.out = 1000 )
+```
+
+```{r}
+y <- dnorm(x, mean = mu, sd = sigma)
+```
+
+
+```{r}
+plot (
+  x, y, type = "l",
+  main = "Normal PDF: M(0,1)",
+  xlab = "x (value)", 
+  ylab = "density f(x)",
+  ylim = (0,35)
+)
+```
+
+```{r}
+# vertical line
+abline(v =mu, lty =2)
+```
+
+
+# make fn and get values of y
+
+# at given x, calculating the values
+
+
+
+```{r}
+2.# changing the mean (mu) shifts the distribution
+#Keep sd fixed so only, the location schanges
+# here: take the smallest mean and largest nean and extend +/- sd a
+
+x2 <- seq(from = min(mus) - 4 *sig, to = max(mus) + 4*sig, length.out =1000)
+```
+
+```{r}
+ plot(
+   x2, dnorm(x2, mean = mus[1],sd sig),
+   type ="l",
+   main = "changing the mean of variance"
+ )
+```
+
+```{r}
+# add other curves on the same plot
+lines(x2,dnorm(x2, mean = mus[2],sd =sig), lty =2)
+lines(x2,dnorm(x2, mean = mus[2],sd =sig), lty =3)
+```
+

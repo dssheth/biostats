@@ -1,0 +1,58 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+1. One-sample t-test: two-sided, left tail, right tail
+
+```{r}
+cat("1)  One-sample t-test")
+```
+
+```{r}
+set.seed(42)
+x <- rnorm (25, mean = 5.2, sd =1.4)
+mu0 <- 5.0
+```
+
+# single sample, two-sided, t-test
+
+```{r}
+# x = 25
+b1 <- t.test(x, mu = mu0, alternative = "two.sided")
+b1
+
+#custom t-test
+c1 <- one_sample_t_custom(x, mu = mu0, alternative = "two-sided")
+```
+
+```{r}
+# custom function
+one_sample_t_custom <- function (x, mu = 0,
+                                 alternative = c("two.sided", "greater", "less")
+```
+
+```{r}
+#left-tailed test: H1 < H0
+
+mu0<5
+b2 <- t.test(x, mu = mu0 , alternative = "less")
+c2 
+```
+
+```{r}
+#right-tailed distribution
+```
+
+```{r}
+# Two sample t-test (unpaired)
+
+xA <- rnorm(20, mean = 10, sd = 2)
+yA <- rnorm(22, mean = 12, sd = 2.1)
+
+#Welch (default)
+bA_welch <- t.test(xA, yA, alternative = "two.sided", var.equal = FALSE)
+cA_welch <- two_sample_t_custom(xA, yA, alternative = "two.sided", var.equal)
+compare_t_results(bA_welch, cA_welch, "Two-sample unpaired, Welch (var.equal)")
+```
+

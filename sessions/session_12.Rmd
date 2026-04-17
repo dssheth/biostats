@@ -1,0 +1,100 @@
+---
+title: "Session 12"
+author: "Dhruvi Sheth 22294"
+date: "2 Feb 2026"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+```{r}
+getwd()
+```
+
+```{r}
+infect <- read.table("../Project_files/data/infect.txt",
+                     header = FALSE, sep = "\t",
+                     stringsAsFactors = FALSE)
+
+colnames(infect) <- c("sample_id", "nef_ratio", "cell_line")
+```
+
+```{r}
+rna_files <- list.files("../Project_files/data", pattern = "\\.htseq$", full.names = TRUE)
+```
+
+```{r}
+serinc5_id <- "ENSG00000164300"
+
+serinc5_list <- lapply(rna_files, function(f) {
+
+  df <- read.table(
+    f,
+    header = FALSE,
+    sep = "\t",
+    stringsAsFactors = FALSE,
+    fill = TRUE
+  )
+
+  df <- df[, 1:2]
+  colnames(df) <- c("gene_id", "count")
+
+  df <- df[!grepl("^__", df$gene_id), ]
+
+  ser <- df[df$gene_id == serinc5_id, ]
+
+  data.frame(
+    sample_id = sub("\\.htseq$", "", basename(f)),  # clean SRR ID
+    SERINC5_RPM = if (nrow(ser) == 0) NA else ser$count,
+    stringsAsFactors = FALSE
+  )
+})
+
+serinc5_df <- do.call(rbind, serinc5_list)
+```
+
+```{r}
+head(serinc5_df)
+```
+
+```{r}
+plot_df <- merge(infect, serinc5_df, by = "sample_id")
+```
+
+```{r}
+plot_df <- plot_df[!is.na(plot_df$SERINC5_RPM), ]
+
+```
+
+```{r}
+# red = low (0-5), green = medium (5-20), blue = high (20-40)
+plot_df$color <- cut(
+  plot_df$nef_ratio,
+  breaks = c(-Inf, 5, 20, Inf),
+  labels = c("red", "green", "blue")
+)
+```
+
+```{r}
+plot(
+  plot_df$nef_ratio,
+  plot_df$SERINC5_RPM,
+  pch = 21,
+  bg = plot_df$color,
+  cex = 1.5,
+  xlab = "Nef+ / Nef- Infectivity Ratio",
+  ylab = "SERINC5 Expression (Read Counts)",
+  main = "SERINC5 Expression vs Nef Requirement"
+)
+
+fit <- lm(SERINC5_RPM ~ nef_ratio, data = plot_df)
+abline(fit, col = "black", lwd = 2)
+```
+```{r}
+colnames(plot_df)
+```
+
+```{r}
+cor.test(plot_df$SERINC5_RPM, plot_df$nef_ratio)
+```
+

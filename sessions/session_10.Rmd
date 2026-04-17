@@ -1,6 +1,10 @@
 ---
-title: "R Notebook"
-output: html_notebook
+title: "Class 10"
+author: "Dhruvi Sheth 22294"
+date: "28 Jan 2026"
+output:
+  pdf_document: default
+  html_notebook: default
 ---
 
 ```{r}
@@ -19,7 +23,6 @@ vector_sample_2
 
 ```{r}
 dataframe_sample <- data.frame(vector_sample_1, vector_sample_2)
-View(dataframe_sample)
 ```
 
 ```{r}

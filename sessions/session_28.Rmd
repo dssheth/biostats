@@ -1,0 +1,245 @@
+---
+title: "Session 28"
+name: "Dhruvi Sheth"
+date: "March 30, 2026"
+output: html_notebook
+---
+
+```{r}
+set.seed(1234)
+```
+
+```{r}
+theme_teaching <- function(base_size = 12) {
+  theme_bw(base_size = base_size) +
+    theme(
+      panel.grid.minor = element_blank(),
+      panel.grid.major = element_line(linewidth = 0.25),
+      strip.background = element_rect(fill = "grey95", colour = "black"),
+      strip.text = element_text(face = "bold"),
+      plot.title = element_text(face = "bold"),
+      plot.subtitle = element_text(size = base_size * 0.95),
+      axis.title = element_text(face = "bold"),
+      plot.tag = element_text(face = "bold", size = base_size * 1.25)
+    )
+}
+```
+
+```{r}
+simulate_linear <- function(n = 50,
+                            slope = 1,
+                            intercept = 0,
+                            noise_sd = 1,
+                            x_min = 0,
+                            x_max = 10) {
+  x <- seq(x_min, x_max, length.out = n)
+  y <- intercept + slope * x + rnorm(n, mean = 0, sd = noise_sd)
+  tibble(x = x, y = y)
+}
+
+simulate_nonlinear_quadratic <- function(n = 80,
+                                         noise_sd = 3,
+                                         x_min = -5,
+                                         x_max = 5) {
+  x <- seq(x_min, x_max, length.out = n)
+  y <- x^2 + rnorm(n, mean = 0, sd = noise_sd)
+  tibble(x = x, y = y)
+}
+
+simulate_nonlinear_monotonic <- function(n = 80,
+                                         noise_sd = 0.25,
+                                         x_min = 0.5,
+                                         x_max = 10) {
+  x <- seq(x_min, x_max, length.out = n)
+  y <- log(x) + rnorm(n, mean = 0, sd = noise_sd)
+  tibble(x = x, y = y)
+}
+
+get_stats <- function(df) {
+  pearson_test  <- cor.test(df$x, df$y, method = "pearson")
+  spearman_test <- cor.test(df$x, df$y, method = "spearman", exact = FALSE)
+  lm_fit <- lm(y ~ x, data = df)
+ 
+  tibble(
+    slope_est = coef(lm_fit)[2],
+    intercept_est = coef(lm_fit)[1],
+    pearson_r = unname(pearson_test$estimate),
+    pearson_p = pearson_test$p.value,
+    spearman_rho = unname(spearman_test$estimate),
+    spearman_p = spearman_test$p.value
+  )
+}
+```
+
+```{r}
+format_p <- function(p) {
+  if (is.na(p)) return("p = NA")
+  if (p < 2.2e-16) {
+    "p < 2.2e-16"
+  } else if (p < 0.001) {
+    paste0("p = ", format(p, scientific = TRUE, digits = 2))
+  } else {
+    paste0("p = ", signif(p, 3))
+  }
+}
+
+```
+
+```{r}
+make_annotation <- function(stats_row,
+                            include_slope = TRUE,
+                            include_spearman = TRUE) {
+  pieces <- c()
+  if (include_slope) {
+    pieces <- c(pieces, paste0("slope = ", round(stats_row$slope_est, 2)))
+  }
+  pieces <- c(
+    pieces,
+    paste0("Pearson r = ", round(stats_row$pearson_r, 2)),
+    format_p(stats_row$pearson_p)
+  )
+  if (include_spearman) {
+    pieces <- c(
+      pieces,
+      paste0("Spearman rho = ", round(stats_row$spearman_rho, 2))
+    )
+  }
+  paste(pieces, collapse = "\n")
+}
+```
+
+```{r}
+panel_plot <- function(df,
+                       title = "",
+                       subtitle = NULL,
+                       show_lm = TRUE,
+                       show_loess = FALSE,
+                       annotate_text = NULL,
+                       tag = NULL) {
+ 
+  p <- ggplot(df, aes(x = x, y = y)) +
+    geom_point(size = 2, alpha = 0.8)
+ 
+  if (show_lm) {
+    p <- p + geom_smooth(method = "lm", se = FALSE, linewidth = 0.9)
+  }
+ 
+  if (show_loess) {
+    p <- p + geom_smooth(method = "loess", se = FALSE, linewidth = 0.9, linetype = 2)
+  }
+ 
+  p <- p +
+    labs(
+      title = title,
+      subtitle = subtitle,
+      x = "X",
+      y = "Y",
+      tag = tag
+    ) +
+    theme_teaching()
+ 
+  if (!is.null(annotate_text)) {
+    x_pos <- min(df$x) + 0.03 * diff(range(df$x))
+    y_pos <- max(df$y) - 0.04 * diff(range(df$y))
+    p <- p + annotate(
+      "label",
+      x = x_pos,
+      y = y_pos,
+      hjust = 0,
+      vjust = 1,
+      size = 3.5,
+      label = annotate_text
+    )
+  }
+ 
+  p
+}
+```
+
+
+```{r}
+# A. Same high correlation, shallow slope
+df_A <- simulate_linear(n = 70, slope = 0.4, noise_sd = 0.30)
+st_A <- get_stats(df_A)
+ann_A <- make_annotation(st_A)
+
+# B. Similar correlation, steeper slope
+#    Scaling both slope and noise keeps the pattern similarly tight
+df_B <- simulate_linear(n = 70, slope = 1.8, noise_sd = 1.35)
+st_B <- get_stats(df_B)
+ann_B <- make_annotation(st_B)
+
+# C. Same slope as B, but much more spread, so lower correlation
+df_C <- simulate_linear(n = 70, slope = 1.8, noise_sd = 4.5)
+st_C <- get_stats(df_C)
+ann_C <- make_annotation(st_C)
+
+# D. Nonlinear quadratic relationship:
+#    strong structure, but Pearson can be near 0
+df_D <- simulate_nonlinear_quadratic(n = 90, noise_sd = 2.8)
+st_D <- get_stats(df_D)
+ann_D <- make_annotation(st_D)
+```
+
+```{r}
+pA <- panel_plot(
+  df_A,
+  title = "Shallow slope, tight spread",
+  subtitle = "High linear association despite shallow slope",
+  show_lm = TRUE,
+  annotate_text = ann_A,
+  tag = "A"
+)
+
+pB <- panel_plot(
+  df_B,
+  title = "Steeper slope, similarly tight spread",
+  subtitle = "Slope changes, but correlation can remain high",
+  show_lm = TRUE,
+  annotate_text = ann_B,
+  tag = "B"
+)
+
+pC <- panel_plot(
+  df_C,
+  title = "Same slope, much wider spread",
+  subtitle = "More scatter around the line reduces correlation",
+  show_lm = TRUE,
+  annotate_text = ann_C,
+  tag = "C"
+)
+
+pD <- panel_plot(
+  df_D,
+  title = "Nonlinear relationship",
+  subtitle = "Pearson may be small even when the relationship is strong",
+  show_lm = TRUE,
+  show_loess = TRUE,
+  annotate_text = ann_D,
+  tag = "D"
+)
+```
+
+
+```{r}
+fig1 <- (pA | pB) / (pC | pD) +
+  plot_annotation(
+    title = "Figure 1. Slope, spread, and the meaning of correlation",
+    subtitle = paste(
+      "Panels A and B show that slope alone does not determine correlation.",
+      "Panel C shows that greater spread around the line lowers correlation.",
+      "Panel D shows that Pearson correlation can miss nonlinear structure."
+    )
+  )
+
+print(fig1)
+
+ggsave("Figure1_conceptual_correlation_panels.png", fig1, width = 13, height = 10, dpi = 300)
+ggsave("Figure1_conceptual_correlation_panels.pdf", fig1, width = 13, height = 10)
+
+```
+
+```{r}
+
+```
+

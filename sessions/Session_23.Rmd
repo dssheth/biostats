@@ -1,0 +1,114 @@
+---
+title: "Session 23"
+name: "Dhruvi Sheth 22294"
+date: "13 March 2026"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+
+```{r}
+# ANOVA
+
+## comparing more than 2 vectors
+x = rnorm(10, sd=10, mean=5)
+y = rnorm(10, sd=10, mean=6)
+z = rnorm(10, sd=10, mean=7)
+```
+
+```{r}
+data.frame(values=c(x,y,z),
+           variable=c(rep("x", length(x)),
+                      rep("y", length(y)),
+                      rep("z", length(z)))) -> xyzBox
+
+boxplot(xyzBox$values~xyzBox$variable,
+        main = "One wayANOVA",
+        xlab = "Groups",
+        ylab = "Values",
+        col = c("lightblue", "lightpink", "lightgreen"))
+```
+
+```{r}
+# ANOVA
+
+## comparing more than 2 vectors
+a = rnorm(10, sd=10, mean=60)
+b = rnorm(10, sd=10, mean=6)
+c = rnorm(10, sd=10, mean=7)
+```
+
+```{r}
+data.frame(values=c(x,y,z),
+           variable=c(rep("a", length(a)),
+                      rep("b", length(b)),
+                      rep("c", length(c)))) -> abcBox
+
+boxplot(abcBox$values~abcBox$variable,
+        main = "One way ANOVA",
+        xlab = "Groups",
+        ylab = "Values",
+        col = c("lightblue", "lightpink", "lightgreen"))
+```
+```{r}
+# rbind will append the rows
+
+rbind(abcBox,xyzBox) -> abcxyzBox
+
+boxplot(abcxyzBox$values~abcxyzBox$variable,
+        main = "One way ANOVA",
+        xlab = "Groups",
+        ylab = "Values",
+        col = c("lightblue", "lightpink", "lightgreen"))
+```
+
+```{r}
+# One way anova
+
+res.aov <- aov(values ~ variable, data = abcxyzBox)
+
+# Null hypothesis: All groups have the same mean
+
+res.aov
+```
+
+
+```{r}
+summary(res.aov)
+```
+
+```{r}
+# Alternative Hypothesis: All groups don't have the same mean
+
+res.aov_alt <- aov(values ~ variable, data = xyzBox)
+
+res.aov_alt
+```
+
+```{r}
+summary(res.aov_alt)
+```
+
+```{r}
+# ANOVA
+
+## comparing more than 2 vectors
+p = rnorm(50, sd=10, mean=20)
+q = rnorm(60, sd=10, mean=5)
+r = rnorm(80, sd=10, mean=10)
+```
+
+```{r}
+data.frame(values=c(p,q,r),
+           variable=c(rep("p", length(p)),
+                      rep("q", length(q)),
+                      rep("r", length(r)))) -> pqrBox
+
+boxplot(pqrBox$values~pqrBox$variable,
+        main = "One way ANOVA",
+        xlab = "Groups",
+        ylab = "Values",
+        col = c("lightblue", "lightpink", "lightgreen"))
+```
+

@@ -1,0 +1,35 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+data(iris)
+t.test(iris$Sepal.Length, mu = 30)
+```
+
+```{r}
+t.test(iris$Sepal.Length[iris$Species =="setosa"], iris$Sepal.Length[iris$Species =="versicolor"], alternative = "less")
+
+# sepal length of setosa is more than versicolor, when greater alternative
+```
+
+```{r}
+library(car)
+leveneTest(iris$Sepal.Length ~ iris$Species)
+
+levels(iris$Species)
+```
+
+```{r}
+anova <- aov(iris$Sepal.Length ~ iris$Species)
+```
+
+```{r}
+summary(anova)
+```
+
+iris sepal length for all is equal is null hyp
+is different is alt hyp
+
+

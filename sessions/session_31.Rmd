@@ -1,0 +1,294 @@
+---
+title: "Session 31"
+author: "Dhruvi Sheth 22294"
+date: "April 8, 2026"
+output: html_notebook
+---
+
+```{r}
+# Multiple regression
+
+# Full model
+
+# step wise selection
+
+#  AIC comparison
+dof same, Aic decrease
+```
+
+```{r}
+rm(list = ls())
+set.seed(123)
+
+# Load libraries
+library(ggplot2)
+library(dplyr)
+```
+
+```{r}
+data(mtcars)
+head(mtcars)
+```
+
+```{r}
+# Scatterplot with regression line
+ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(title = "Weight vs MPG",
+       x = "Weight",
+       y = "Miles per gallon")
+```
+
+```{r}
+# SIMPLE LINEAR REGRESSION
+
+# Fit model
+model1 <- lm(mpg ~ wt, data = mtcars)
+
+# Summary
+summary(model1)
+```
+
+```{r}
+# Extract coefficients
+coef(model1)
+```
+
+```{r}
+# Predictions
+new_data <- data.frame(wt = c(2.5, 3.0, 3.5))
+predict(model1, newdata = new_data)
+```
+
+```{r}
+#  INFERENCE
+
+# Confidence intervals for coefficients
+confint(model1)
+```
+
+```{r}
+# Prediction intervals
+predict(model1, newdata = new_data, interval = "confidence")
+```
+
+```{r}
+predict(model1, newdata = new_data, interval = "prediction")
+```
+
+```{r}
+# Residual standard error
+summary(model1)$sigma
+```
+
+```{r}
+# DIAGNOSTICS
+
+# Diagnostic plots
+par(mfrow = c(2, 2))
+plot(model1)
+```
+
+```{r}
+# Residuals vs fitted (custom)
+ggplot(data.frame(fitted = fitted(model1),
+                  residuals = resid(model1)),
+       aes(x = fitted, y = residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(title = "Residuals vs Fitted")
+```
+
+```{r}
+# MULTIPLE REGRESSION
+
+# Fit multiple regression model
+model2 <- lm(mpg ~ wt + hp + cyl, data = mtcars)
+
+# Summary
+summary(model2)
+```
+
+```{r}
+# Compare models
+summary(model1)$r.squared
+```
+
+```{r}
+summary(model2)$r.squared
+```
+
+```{r}
+# ANOVA comparison
+anova(model1, model2)
+```
+
+```{r}
+# MODEL SELECTION
+
+# Full model
+full_model <- lm(mpg ~ ., data = mtcars)
+```
+
+
+```{r}
+# Stepwise selection
+step_model <- step(full_model, direction = "both", trace = 0)
+
+summary(step_model)
+```
+
+```{r}
+# AIC comparison
+AIC(model1, model2, step_model)
+```
+
+```{r}
+#  NONLINEARITY
+
+# Polynomial regression
+model_poly <- lm(mpg ~ poly(wt, 2), data = mtcars)
+
+summary(model_poly)
+```
+
+```{r}
+# Plot polynomial fit
+ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point() +
+  stat_smooth(method = "lm",
+              formula = y ~ poly(x, 2),
+              se = TRUE) +
+  labs(title = "Polynomial Regression (Degree 2)")
+```
+
+```{r}
+# TRANSFORMATIONS
+
+# Log transformation
+model_log <- lm(log(mpg) ~ wt, data = mtcars)
+
+summary(model_log)
+```
+
+```{r}
+# MODEL VALIDATION
+
+# Train-test split
+set.seed(42)
+train_index <- sample(1:nrow(mtcars), 0.7 * nrow(mtcars))
+```
+
+```{r}
+train_data <- mtcars[train_index, ]
+test_data  <- mtcars[-train_index, ]
+```
+
+```{r}
+# Train model
+model_train <- lm(mpg ~ wt + hp, data = train_data)
+
+# Predict on test
+pred <- predict(model_train, newdata = test_data)
+```
+
+```{r}
+# RMSE
+rmse <- sqrt(mean((test_data$mpg - pred)^2))
+rmse
+```
+
+
+```{r}
+# CAPSTONE STYLE ANALYSIS
+
+
+# Example workflow
+
+# 1. Explore data
+summary(mtcars)
+```
+
+```{r}
+# 2. Fit model
+final_model <- lm(mpg ~ wt + hp + qsec, data = mtcars)
+```
+
+```{r}
+# 3. Check diagnostics
+par(mfrow = c(2,2))
+plot(final_model)
+```
+
+```{r}
+# 4. Interpret coefficients
+summary(final_model)
+```
+
+```{r}
+# 5. Make predictions
+predict(final_model, newdata = data.frame(
+  wt = 3,
+  hp = 120,
+  qsec = 18
+))
+```
+
+```{r}
+# MULTICOLLINEARITY CHECK
+
+# Install if needed
+# install.packages("car")
+library(car)
+
+vif(model2)
+```
+
+```{r}
+# VISUALIZATION ENHANCEMENT
+
+ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
+  geom_point(size = 3) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "MPG vs Weight by Cylinders",
+       color = "Cylinders")
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

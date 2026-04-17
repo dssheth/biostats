@@ -1,0 +1,42 @@
+---
+title: "Session 29"
+author: "Dhruvi Sheth"
+date: "6 April 2026"
+output: html_notebook
+---
+
+```{r}
+LunchAmt <- c(300,154,72,899,1234,36,764,321,540,684)
+TipAmt <- c(30,15,7,89,123,3,76,32,54,68)
+
+plot(LunchAmt,
+     TipAmt,
+     xlab="Lunch Amount",
+     ylab="Tip Amount")
+
+reg_model <-lm(TipAmt~LunchAmt)
+
+# plotting regression fit
+abline(reg_model, col="blue")
+summary(reg_model)
+```
+
+```{r}
+a<-data.frame(newdata=40)
+colnames(a)<-"LunchAmount"
+#what is the Tip if cost of lunch is 40 INR?
+predict(reg_model,a)
+
+```
+
+```{r}
+a<-data.frame(newdata=394)
+colnames(a)<-"LunchAmount"
+#what is the Tip if cost of lunch is 394 INR?
+predict(reg_model,a)
+```
+
+```{r}
+Restaurant class
+```
+

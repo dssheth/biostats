@@ -1,0 +1,24 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+## Example A: Similar variances, similar n
+
+```{r}
+xA <- rnorm(20, mean = 10, sd = 2)
+yA <- rnorm(22, mean = 12, sd = 2.1)
+```
+
+```{r}
+# Welch (default)
+
+bA_welch <- t.test(xA, yA, alternative = "two.sided", var.equal = FALSE)
+cA_welch <- two_sample_t_custom(xA, yA, alternative = "two.sided", var.equal)
+compare_t_results(bA_welch, cA_welch, "Two-sample unpaired, Welch (var.equal)")
+```
+
+```{r}
+#Pooled variance
+```
+
