@@ -1,5 +1,7 @@
 ---
-title: "R Notebook"
+title: "Class 6"
+author: "Dhruvi Sheth (22294)"
+date: "16 Jan 2026"
 output: html_notebook
 ---
 
@@ -13,7 +15,7 @@ median(vector_1)
 ```
 
 ```{r}
-mode(vector_1) ## no direct mode calculation... this is a storange of an object
+mode(vector_1) ## no direct mode calculation... this is a storage of an object
 ```
 
 ```{r}
