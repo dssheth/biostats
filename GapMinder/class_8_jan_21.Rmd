@@ -1,0 +1,113 @@
+---
+title: "Class 8"
+author: "Dhruvi Sheth 22294"
+date: "21 Jan 2026"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+
+```{r}
+getwd()
+```
+
+
+```{r}
+lifeExpectancy <- read.csv("life_expectancy_years.csv", header = TRUE, check.names = FALSE)
+```
+
+```{r}
+lifeExpectancy[lifeExpectancy$country == "Sweden"]
+```
+
+```{r}
+plot(lifeExpectancy[,2])
+
+years <- as.numeric(colnames(lifeExpectancy)[2:302])
+le <- as.numeric(lifeExpectancy[162, 2:302])
+```
+
+
+```{r}
+plot(lifeExpectancy[,2],lifeExpectancy[,101])
+```
+
+```{r}
+plot(lifeExpectancy[,2],lifeExpectancy[,3],xlab="1800", ylab="1801")
+```
+
+```{r}
+
+plot(as.vector(unlist(lifeExpectancy[162,2:302])),as.vector(unlist(lifeExpectancy[3,2:302])))
+```
+```{r}
+plot(as.vector(unlist(lifeExpectancy[162,2:302])),
+     as.vector(unlist(colnames(lifeExpectancy)[2:302]))
+     ,xlab="Life expectancy in years", ylab="Year")
+abline(h=2022)
+
+```
+
+```{r}
+years <- as.numeric(colnames(lifeExpectancy)[2:302])
+le <- as.numeric(lifeExpectancy[162, 2:302])
+
+plot(years, le,
+     xlab = "Year",
+     ylab = "Life expectancy (years)",
+     type = "l")
+
+abline(v = 2022)
+```
+
+```{r}
+lifeExpectancy[lifeExpectancy$country=="Sweden",]
+
+na.omit(as.numeric(unlist(lifeExpectancy[lifeExpectancy$country=="Sweden",])))->SwedenLife
+na.omit(as.numeric(unlist(lifeExpectancy[lifeExpectancy$country=="India",])))->IndiaLife
+
+par(mfrow=c(1,2))
+hist(SwedenLife)
+hist(IndiaLife)
+
+na.omit(as.numeric(unlist(lifeExpectancy[lifeExpectancy$country=="Bangladesh",])))->BanglaLife
+na.omit(as.numeric(unlist(lifeExpectancy[lifeExpectancy$country=="Australia",])))->AussieLife
+na.omit(as.numeric(unlist(lifeExpectancy[lifeExpectancy$country=="China",])))->ChinaLife
+
+```
+
+```{r}
+plot(c(1800:2100),SwedenLife,col="red",main="Life Expectancy in Years",pch=8,ylim=c(0,100),xlab="Years",ylab="Age")->ZX
+points(c(1800:2100),IndiaLife,col="blue", pch = 0)
+points(c(1800:2100),BanglaLife,col="green",  pch = 2)
+points(c(1800:2100),AussieLife,col="black", pch = 5)
+points(c(1800:2100),ChinaLife,col="orange", pch =1)
+
+legend("topleft",
+       legend = c("Sweden", "India", "Bangladesh", "Australia", "China"),
+       col    = c("red", "blue", "green", "black", "orange"),
+       pch    = c(8, 0 , 2, 5, 1),
+       bty    = "n")
+
+
+
+
+
+abline(v=2000)
+abline(v=2022)
+
+abline(h=20)
+
+```
+```{r}
+
+par(mfrow=c(3,3))
+plot(c(1800:2100),SwedenLife,col="red",ylim=c(0,100),xlab="Years",ylab="Age")
+plot(c(1800:2100),IndiaLife,col="blue",ylim=c(0,100),xlab="Years",ylab="Age")
+plot(c(1800:2100),BanglaLife,col="green",ylim=c(0,100),xlab="Years",ylab="Age")
+```
+
+
+
+

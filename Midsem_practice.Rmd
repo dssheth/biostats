@@ -1,0 +1,99 @@
+---
+title: "Mid Sem Practice"
+output: html_notebook
+---
+
+```{r}
+y <- 1:10
+y
+z <- seq(0,10, by=2)
+z
+```
+
+```{r}
+x <- c(2,4,6,8,10)
+x[3]
+x[c(2,4)]
+x[x>5]
+```
+
+#df
+
+```{r}
+df <- data.frame(
+  name = c("A","B","C","D"),
+  age = c(20,22,19,21),
+  marks = c(75,80,65,90)
+)
+```
+
+```{r}
+df$age
+df[df$marks > 70, ]
+```
+
+```{r}
+df["age"]
+```
+
+```{r}
+df$age
+```
+
+```{r}
+class(df$age)
+```
+
+```{r}
+class(df["age"])
+```
+
+```{r}
+x <- c(1,2,3)
+y <- c(4,5)
+x + y
+```
+
+
+```{r}
+x <- list(a=1, b=2)
+class(x)
+```
+
+```{r}
+mean(c(1,2,NA,4))
+```
+
+```{r}
+pnorm(1.96)
+```
+
+```{r}
+x <- c(2,4,6,8)
+mean(x > 4)
+```
+
+```{r}
+x <- c(1,2,3)
+y <- c(10,20,30)
+tapply(y, x %% 2, mean)
+```
+
+```{r}
+logFC <- rnorm(100)
+pval <- runif(100)
+
+plot(logFC, -log10(pval),
+     pch=20,
+     main="Volcano Plot")
+```
+
+```{r}
+x <- rnorm(100)
+y1 <- rnorm(100)
+y2 <- rnorm(100)
+
+plot(x, y1, col="red")
+points(x, y2, col="blue")
+```
+
